@@ -1,7 +1,7 @@
 ﻿Imports pbs.Helper
 Imports pbs.Helper.Interfaces
 
-Namespace MC
+Namespace SO
     Public Class ScriptInstaller
         Implements IRunable
 

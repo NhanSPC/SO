@@ -5,7 +5,6 @@ Imports System.Data
 Imports Csla
 Imports Csla.Data
 Imports Csla.Validation
-Imports System.Text.RegularExpressions
 
 Namespace SO
 
@@ -21,10 +20,10 @@ Namespace SO
 #Region " Business Properties and Methods "
 
 
-        Private _recType As String = String.Empty
-        Public ReadOnly Property RecType() As String
+        Private _lineNo As Integer
+        Public ReadOnly Property LineNo() As Integer
             Get
-                Return _recType
+                Return _lineNo
             End Get
         End Property
 
@@ -35,17 +34,10 @@ Namespace SO
             End Get
         End Property
 
-        Private _transLine As String = String.Empty
-        Public ReadOnly Property TransLine() As String
+        Private _qtNo As pbs.Helper.SmartInt32 = New pbs.Helper.SmartInt32(0)
+        Public ReadOnly Property QtNo() As String
             Get
-                Return _transLine
-            End Get
-        End Property
-
-        Private _detailId As String = String.Empty
-        Public ReadOnly Property DetailId() As String
-            Get
-                Return _detailId
+                Return _qtNo.Text
             End Get
         End Property
 
@@ -91,24 +83,45 @@ Namespace SO
             End Get
         End Property
 
-        Private _value1 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value1() As String
+        Private _saleQty As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property SaleQty() As String
             Get
-                Return _value1.Text
+                Return _saleQty.Text
             End Get
         End Property
 
-        Private _value2 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value2() As String
+        Private _unitSale As String = String.Empty
+        Public ReadOnly Property UnitSale() As String
             Get
-                Return _value2.Text
+                Return _unitSale
             End Get
         End Property
 
-        Private _value3 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value3() As String
+        Private _stkQty As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property StkQty() As String
             Get
-                Return _value3.Text
+                Return _stkQty.Text
+            End Get
+        End Property
+
+        Private _bsp As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property Bsp() As String
+            Get
+                Return _bsp.Text
+            End Get
+        End Property
+
+        Private _curRate As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property CurRate() As String
+            Get
+                Return _curRate.Text
+            End Get
+        End Property
+
+        Private _unitPrice As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property UnitPrice() As String
+            Get
+                Return _unitPrice.Text
             End Get
         End Property
 
@@ -119,45 +132,45 @@ Namespace SO
             End Get
         End Property
 
-        Private _value5 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value5() As String
+        Private _net As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property Net() As String
             Get
-                Return _value5.Text
+                Return _net.Text
             End Get
         End Property
 
-        Private _value6 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value6() As String
+        Private _discount As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property Discount() As String
             Get
-                Return _value6.Text
+                Return _discount.Text
             End Get
         End Property
 
-        Private _value7 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value7() As String
+        Private _shippingFee As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property ShippingFee() As String
             Get
-                Return _value7.Text
+                Return _shippingFee.Text
             End Get
         End Property
 
-        Private _value8 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value8() As String
+        Private _taxableAmount As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property TaxableAmount() As String
             Get
-                Return _value8.Text
+                Return _taxableAmount.Text
             End Get
         End Property
 
-        Private _value9 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value9() As String
+        Private _taxRate As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property TaxRate() As String
             Get
-                Return _value9.Text
+                Return _taxRate.Text
             End Get
         End Property
 
-        Private _value10 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value10() As String
+        Private _taxAmount As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property TaxAmount() As String
             Get
-                Return _value10.Text
+                Return _taxAmount.Text
             End Get
         End Property
 
@@ -224,10 +237,10 @@ Namespace SO
             End Get
         End Property
 
-        Private _value20 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property Value20() As String
+        Private _lineTotal As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
+        Public ReadOnly Property LineTotal() As String
             Get
-                Return _value20.Text
+                Return _lineTotal.Text
             End Get
         End Property
 
@@ -245,31 +258,10 @@ Namespace SO
             End Get
         End Property
 
-        Private _invDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        Public ReadOnly Property InvDate() As String
-            Get
-                Return _invDate.DateViewFormat
-            End Get
-        End Property
-
         Private _ordPrd As SmartPeriod = New pbs.Helper.SmartPeriod()
         Public ReadOnly Property OrdPrd() As String
             Get
                 Return _ordPrd.Text
-            End Get
-        End Property
-
-        Private _invPrd As SmartPeriod = New pbs.Helper.SmartPeriod()
-        Public ReadOnly Property InvPrd() As String
-            Get
-                Return _invPrd.Text
-            End Get
-        End Property
-
-        Private _unitSale As String = String.Empty
-        Public ReadOnly Property UnitSale() As String
-            Get
-                Return _unitSale
             End Get
         End Property
 
@@ -294,55 +286,6 @@ Namespace SO
             End Get
         End Property
 
-        Private _allocRef As String = String.Empty
-        Public ReadOnly Property AllocRef() As String
-            Get
-                Return _allocRef
-            End Get
-        End Property
-
-        Private _recptRef As String = String.Empty
-        Public ReadOnly Property RecptRef() As String
-            Get
-                Return _recptRef
-            End Get
-        End Property
-
-        Private _lineAnal As String = String.Empty
-        Public ReadOnly Property LineAnal() As String
-            Get
-                Return _lineAnal
-            End Get
-        End Property
-
-        Private _accntCode As String = String.Empty
-        Public ReadOnly Property AccntCode() As String
-            Get
-                Return _accntCode
-            End Get
-        End Property
-
-        Private _assetCode As String = String.Empty
-        Public ReadOnly Property AssetCode() As String
-            Get
-                Return _assetCode
-            End Get
-        End Property
-
-        Private _assSubCode As String = String.Empty
-        Public ReadOnly Property AssSubCode() As String
-            Get
-                Return _assSubCode
-            End Get
-        End Property
-
-        Private _assetInd As String = String.Empty
-        Public ReadOnly Property AssetInd() As String
-            Get
-                Return _assetInd
-            End Get
-        End Property
-
         Private _idEntered As String = String.Empty
         Public ReadOnly Property IdEntered() As String
             Get
@@ -354,13 +297,6 @@ Namespace SO
         Public ReadOnly Property IdInvoiced() As String
             Get
                 Return _idInvoiced
-            End Get
-        End Property
-
-        Private _linkedText As String = String.Empty
-        Public ReadOnly Property LinkedText() As String
-            Get
-                Return _linkedText
             End Get
         End Property
 
@@ -434,27 +370,6 @@ Namespace SO
             End Get
         End Property
 
-        Private _assemblyInd As String = String.Empty
-        Public ReadOnly Property AssemblyInd() As String
-            Get
-                Return _assemblyInd
-            End Get
-        End Property
-
-        Private _assemblyDesc As String = String.Empty
-        Public ReadOnly Property AssemblyDesc() As String
-            Get
-                Return _assemblyDesc
-            End Get
-        End Property
-
-        Private _assemblyLevel As String = String.Empty
-        Public ReadOnly Property AssemblyLevel() As String
-            Get
-                Return _assemblyLevel
-            End Get
-        End Property
-
         Private _priceBook As String = String.Empty
         Public ReadOnly Property PriceBook() As String
             Get
@@ -466,48 +381,6 @@ Namespace SO
         Public ReadOnly Property ConvCode() As String
             Get
                 Return _convCode
-            End Get
-        End Property
-
-        Private _saleQty As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property SaleQty() As String
-            Get
-                Return _saleQty.Text
-            End Get
-        End Property
-
-        Private _stkQty As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        Public ReadOnly Property StkQty() As String
-            Get
-                Return _stkQty.Text
-            End Get
-        End Property
-
-        Private _totValue As pbs.Helper.SmartInt32 = New pbs.Helper.SmartInt32(0)
-        Public ReadOnly Property TotValue() As String
-            Get
-                Return _totValue.Text
-            End Get
-        End Property
-
-        Private _dispVal1 As pbs.Helper.SmartInt32 = New pbs.Helper.SmartInt32(0)
-        Public ReadOnly Property DispVal1() As String
-            Get
-                Return _dispVal1.Text
-            End Get
-        End Property
-
-        Private _dispVal2 As pbs.Helper.SmartInt32 = New pbs.Helper.SmartInt32(0)
-        Public ReadOnly Property DispVal2() As String
-            Get
-                Return _dispVal2.Text
-            End Get
-        End Property
-
-        Private _dispVal3 As pbs.Helper.SmartInt32 = New pbs.Helper.SmartInt32(0)
-        Public ReadOnly Property DispVal3() As String
-            Get
-                Return _dispVal3.Text
             End Get
         End Property
 
@@ -546,13 +419,6 @@ Namespace SO
             End Get
         End Property
 
-        Private _dNoteNo As String = String.Empty
-        Public ReadOnly Property DNoteNo() As String
-            Get
-                Return _dNoteNo
-            End Get
-        End Property
-
         Private _isInterfaced As String = String.Empty
         Public ReadOnly Property IsInterfaced() As String
             Get
@@ -576,41 +442,33 @@ Namespace SO
 
         'Get ID
         Protected Overrides Function GetIdValue() As Object
-            Return String.Format("{0}:{1}", _transRef.Trim, _transLine.Trim)
+            Return _lineNo
         End Function
 
         'IComparable
         Public Function CompareTo(ByVal IDObject) As Integer Implements System.IComparable.CompareTo
             Dim ID = IDObject.ToString
-            'Dim m As MatchCollection = Regex.Matches(ID, pbsRegex.AlphaNumericExt)
-            'Dim pTransRef As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).Value.Trim
-            'Dim pTransLine As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).NextMatch.Value.Trim
-
-            Dim pTransRef As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).Value
-            Dim pTransLine As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).NextMatch.Value
-
-            If _transRef.Trim < pTransRef Then Return -1
-            If _transRef.Trim > pTransRef Then Return 1
-            If _transLine.Trim < pTransLine Then Return -1
-            If _transLine.Trim > pTransLine Then Return 1
+            Dim pLineNo As Integer = ID.Trim.ToInteger
+            If _lineNo < pLineNo Then Return -1
+            If _lineNo > pLineNo Then Return 1
             Return 0
         End Function
 
         Public ReadOnly Property Code As String Implements IInfo.Code
             Get
-                Return String.Format("{0}.{1}", _transRef, _transLine)
+                Return _transRef
             End Get
         End Property
 
         Public ReadOnly Property LookUp As String Implements IInfo.LookUp
             Get
-                Return String.Format("{0}.{1}", _transRef, _transLine)
+                Return _transactionType
             End Get
         End Property
 
         Public ReadOnly Property Description As String Implements IInfo.Description
             Get
-                Return String.Format("{0}.{1}", _transRef, _transLine)
+                Return String.Format("{1}{2}", _transRef, _transactionType)
             End Get
         End Property
 
@@ -628,37 +486,38 @@ Namespace SO
             Return New QTDInfo(dr)
         End Function
 
-        Friend Shared Function EmptyQTDInfo(Optional ByVal pTransRef As String = "", Optional ByVal pTransLine As String = "") As QTDInfo
+        Friend Shared Function EmptyQTDInfo(Optional ByVal pLineNo As String = "") As QTDInfo
             Dim info As QTDInfo = New QTDInfo
             With info
-                ._transRef = pTransRef
-                ._transLine = pTransLine
+                ._lineNo = pLineNo.ToInteger
 
             End With
             Return info
         End Function
 
         Private Sub New(ByVal dr As SafeDataReader)
-            _recType = dr.GetString("REC_TYPE").TrimEnd
+            _lineNo = dr.GetInt32("LINE_NO")
             _transRef = dr.GetString("TRANS_REF").TrimEnd
-            _transLine = dr.GetString("TRANS_LINE").TrimEnd
-            _detailId = dr.GetString("DETAIL_ID").TrimEnd
+            _qtNo.Text = dr.GetInt32("QT_NO")
             _location = dr.GetString("LOCATION").TrimEnd
             _itemCode = dr.GetString("ITEM_CODE").TrimEnd
             _dueDate.Text = dr.GetInt32("DUE_DATE")
             _status = dr.GetString("STATUS").TrimEnd
             _transCd = dr.GetString("TRANS_CD").TrimEnd
             _descriptn = dr.GetString("DESCRIPTN").TrimEnd
-            _value1.Text = dr.GetDecimal("VALUE_1")
-            _value2.Text = dr.GetDecimal("VALUE_2")
-            _value3.Text = dr.GetDecimal("VALUE_3")
+            _saleQty.Text = dr.GetDecimal("SALE_QTY")
+            _unitSale = dr.GetString("UNIT_SALE").TrimEnd
+            _stkQty.Text = dr.GetDecimal("STK_QTY")
+            _bsp.Text = dr.GetDecimal("BSP")
+            _curRate.Text = dr.GetDecimal("CUR_RATE")
+            _unitPrice.Text = dr.GetDecimal("UNIT_PRICE")
             _value4.Text = dr.GetDecimal("VALUE_4")
-            _value5.Text = dr.GetDecimal("VALUE_5")
-            _value6.Text = dr.GetDecimal("VALUE_6")
-            _value7.Text = dr.GetDecimal("VALUE_7")
-            _value8.Text = dr.GetDecimal("VALUE_8")
-            _value9.Text = dr.GetDecimal("VALUE_9")
-            _value10.Text = dr.GetDecimal("VALUE_10")
+            _net.Text = dr.GetDecimal("NET")
+            _discount.Text = dr.GetDecimal("DISCOUNT")
+            _shippingFee.Text = dr.GetDecimal("SHIPPING_FEE")
+            _taxableAmount.Text = dr.GetDecimal("TAXABLE_AMOUNT")
+            _taxRate.Text = dr.GetDecimal("TAX_RATE")
+            _taxAmount.Text = dr.GetDecimal("TAX_AMOUNT")
             _value11.Text = dr.GetDecimal("VALUE_11")
             _value12.Text = dr.GetDecimal("VALUE_12")
             _value13.Text = dr.GetDecimal("VALUE_13")
@@ -668,26 +527,15 @@ Namespace SO
             _value17.Text = dr.GetDecimal("VALUE_17")
             _value18.Text = dr.GetDecimal("VALUE_18")
             _value19.Text = dr.GetDecimal("VALUE_19")
-            _value20.Text = dr.GetDecimal("VALUE_20")
+            _lineTotal.Text = dr.GetDecimal("LINE_TOTAL")
             _transactionType = dr.GetString("TRANS_TYPE").TrimEnd
             _delDate.Text = dr.GetInt32("DEL_DATE")
-            _invDate.Text = dr.GetInt32("INV_DATE")
             _ordPrd.Text = dr.GetInt32("ORD_PRD")
-            _invPrd.Text = dr.GetInt32("INV_PRD")
-            _unitSale = dr.GetString("UNIT_SALE").TrimEnd
             _invNo = dr.GetString("INV_NO").TrimEnd
             _ackPrint = dr.GetString("ACK_PRINT").TrimEnd
             _miscPrint = dr.GetString("MISC_PRINT").TrimEnd
-            _allocRef = dr.GetString("ALLOC_REF").TrimEnd
-            _recptRef = dr.GetString("RECPT_REF").TrimEnd
-            _lineAnal = dr.GetString("LINE_ANAL").TrimEnd
-            _accntCode = dr.GetString("ACCNT_CODE").TrimEnd
-            _assetCode = dr.GetString("ASSET_CODE").TrimEnd
-            _assSubCode = dr.GetString("ASS_SUB_CODE").TrimEnd
-            _assetInd = dr.GetString("ASSET_IND").TrimEnd
             _idEntered = dr.GetString("ID_ENTERED").TrimEnd
             _idInvoiced = dr.GetString("ID_INVOICED").TrimEnd
-            _linkedText = dr.GetString("LINKED_TEXT").TrimEnd
             _analM0 = dr.GetString("ANAL_M0").TrimEnd
             _analM1 = dr.GetString("ANAL_M1").TrimEnd
             _analM2 = dr.GetString("ANAL_M2").TrimEnd
@@ -698,23 +546,13 @@ Namespace SO
             _analM7 = dr.GetString("ANAL_M7").TrimEnd
             _analM8 = dr.GetString("ANAL_M8").TrimEnd
             _analM9 = dr.GetString("ANAL_M9").TrimEnd
-            _assemblyInd = dr.GetString("ASSEMBLY_IND").TrimEnd
-            _assemblyDesc = dr.GetString("ASSEMBLY_DESC").TrimEnd
-            _assemblyLevel = dr.GetString("ASSEMBLY_LEVEL").TrimEnd
             _priceBook = dr.GetString("PRICE_BOOK").TrimEnd
             _convCode = dr.GetString("CONV_CODE").TrimEnd
-            _saleQty.Text = dr.GetDecimal("SALE_QTY")
-            _stkQty.Text = dr.GetDecimal("STK_QTY")
-            _totValue.Text = dr.GetInt32("TOT_VALUE")
-            _dispVal1.Text = dr.GetInt32("DISP_VAL_1")
-            _dispVal2.Text = dr.GetInt32("DISP_VAL_2")
-            _dispVal3.Text = dr.GetInt32("DISP_VAL_3")
             _miscDocPrint1 = dr.GetString("MISC_DOC_PRINT_1").TrimEnd
             _miscDocPrint2 = dr.GetString("MISC_DOC_PRINT_2").TrimEnd
             _miscDocPrint3 = dr.GetString("MISC_DOC_PRINT_3").TrimEnd
             _miscDocPrint4 = dr.GetString("MISC_DOC_PRINT_4").TrimEnd
             _miscDocPrint5 = dr.GetString("MISC_DOC_PRINT_5").TrimEnd
-            _dNoteNo = dr.GetString("D_NOTE_NO").TrimEnd
             _isInterfaced = dr.GetString("IS_INTERFACED").TrimEnd
             _updated.Text = dr.GetInt32("UPDATED")
             _updatedBy = dr.GetString("UPDATED_BY").TrimEnd
@@ -729,7 +567,7 @@ Namespace SO
 
 #Region "IDoclink"
         Public Function Get_DOL_Reference() As String Implements IDocLink.Get_DOL_Reference
-            Return String.Format("{0}#{1}", Get_TransType, _transRef)
+            Return String.Format("{0}#{1}", Get_TransType, _lineNo)
         End Function
 
         Public Function Get_TransType() As String Implements IDocLink.Get_TransType

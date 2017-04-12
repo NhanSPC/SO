@@ -31,13 +31,13 @@ Namespace SO
             'get the next line number
             Dim nextnumber As Integer = 1
             If Me.Count > 0 Then
-                Dim allNumbers = (From line In Me Where line.TransRef = Me._parent.TransRef Select line.TransLine).ToList
+                Dim allNumbers = (From line In Me Select line.LineNo).ToList
                 Dim var = allNumbers.Max
                 nextnumber = allNumbers.Max + 1
             End If
 
             '_line.{LINE_NO} = String.Format("{0:00000}", nextnumber)
-            pline._transLine = nextnumber
+            pline._LineNo = nextnumber
 
             'Populate _line with info from parent here
 
@@ -97,7 +97,7 @@ Namespace SO
             ' loop through each non-deleted child object
             For Each child As QTD In Me
                 child._DTB = parent._DTB
-                child._TransRef = parent._TransRef
+                child.QtNo = parent.LineNo
                 'child.OrderNo = parent.OrderNo
                 If child.IsNew Then
                     child.Insert(cn)

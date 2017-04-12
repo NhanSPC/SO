@@ -5,7 +5,6 @@ Imports System.Data
 Imports Csla
 Imports Csla.Data
 Imports Csla.Validation
-Imports System.Text.RegularExpressions
 
 Namespace SO
 
@@ -21,10 +20,10 @@ Namespace SO
 #Region " Business Properties and Methods "
 
 
-        Private _recType As String = String.Empty
-        Public ReadOnly Property RecType() As String
+        Private _lineNo As Integer
+        Public ReadOnly Property LineNo() As Integer
             Get
-                Return _recType
+                Return _lineNo
             End Get
         End Property
 
@@ -32,13 +31,6 @@ Namespace SO
         Public ReadOnly Property TransRef() As String
             Get
                 Return _transRef
-            End Get
-        End Property
-
-        Private _headerId As String = String.Empty
-        Public ReadOnly Property HeaderId() As String
-            Get
-                Return _headerId
             End Get
         End Property
 
@@ -63,17 +55,10 @@ Namespace SO
             End Get
         End Property
 
-        Private _transCd As String = String.Empty
-        Public ReadOnly Property TransCd() As String
+        Private _transactionType As String = String.Empty
+        Public ReadOnly Property TransactionType() As String
             Get
-                Return _transCd
-            End Get
-        End Property
-
-        Private _transCode As String = String.Empty
-        Public ReadOnly Property TransCode() As String
-            Get
-                Return _transCode
+                Return _transactionType
             End Get
         End Property
 
@@ -119,34 +104,6 @@ Namespace SO
             End Get
         End Property
 
-        Private _pickDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        Public ReadOnly Property PickDate() As String
-            Get
-                Return _pickDate.DateViewFormat
-            End Get
-        End Property
-
-        Private _delDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        Public ReadOnly Property DelDate() As String
-            Get
-                Return _delDate.DateViewFormat
-            End Get
-        End Property
-
-        Private _invDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        Public ReadOnly Property InvDate() As String
-            Get
-                Return _invDate.DateViewFormat
-            End Get
-        End Property
-
-        Private _invPrd As SmartPeriod = New pbs.Helper.SmartPeriod()
-        Public ReadOnly Property InvPrd() As String
-            Get
-                Return _invPrd.Text
-            End Get
-        End Property
-
         Private _custRef As String = String.Empty
         Public ReadOnly Property CustRef() As String
             Get
@@ -172,27 +129,6 @@ Namespace SO
         Public ReadOnly Property TransVal() As String
             Get
                 Return _transVal.Text
-            End Get
-        End Property
-
-        Private _payDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        Public ReadOnly Property PayDate() As String
-            Get
-                Return _payDate.DateViewFormat
-            End Get
-        End Property
-
-        Private _analAdd As String = String.Empty
-        Public ReadOnly Property AnalAdd() As String
-            Get
-                Return _analAdd
-            End Get
-        End Property
-
-        Private _linkedText As String = String.Empty
-        Public ReadOnly Property LinkedText() As String
-            Get
-                Return _linkedText
             End Get
         End Property
 
@@ -499,41 +435,33 @@ Namespace SO
 
         'Get ID
         Protected Overrides Function GetIdValue() As Object
-            Return String.Format("{0}:{1}", _recType.Trim, _transRef.Trim)
+            Return _lineNo
         End Function
 
         'IComparable
         Public Function CompareTo(ByVal IDObject) As Integer Implements System.IComparable.CompareTo
             Dim ID = IDObject.ToString
-            'Dim m As MatchCollection = Regex.Matches(ID, pbsRegex.AlphaNumericExt)
-            'Dim pRecType As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).Value.Trim
-            'Dim pTransRef As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).NextMatch.Value.Trim
-
-            Dim pRecType As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).Value
-            Dim pTransRef As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).NextMatch.Value
-
-            If _recType.Trim < pRecType Then Return -1
-            If _recType.Trim > pRecType Then Return 1
-            If _transRef.Trim < pTransRef Then Return -1
-            If _transRef.Trim > pTransRef Then Return 1
+            Dim pLineNo As Integer = ID.Trim.ToInteger
+            If _lineNo < pLineNo Then Return -1
+            If _lineNo > pLineNo Then Return 1
             Return 0
         End Function
 
         Public ReadOnly Property Code As String Implements IInfo.Code
             Get
-                Return String.Format("{0}.{1}", _recType, _transRef)
+                Return _transRef
             End Get
         End Property
 
         Public ReadOnly Property LookUp As String Implements IInfo.LookUp
             Get
-                Return String.Format("{0}.{1}", _recType, _transRef)
+                Return _transactionType
             End Get
         End Property
 
         Public ReadOnly Property Description As String Implements IInfo.Description
             Get
-                Return String.Format("{0}.{1}", _recType, _transRef)
+                Return String.Format("Transaction Type: {0}, No: {1}, date {2}", _transactionType, _transRef, _transDate)
             End Get
         End Property
 
@@ -551,42 +479,32 @@ Namespace SO
             Return New QTInfo(dr)
         End Function
 
-        Friend Shared Function EmptyQTInfo(Optional ByVal pRecType As String = "", Optional ByVal pTransRef As String = "") As QTInfo
+        Friend Shared Function EmptyQTInfo(Optional ByVal pLineNo As String = "") As QTInfo
             Dim info As QTInfo = New QTInfo
             With info
-                ._recType = pRecType
-                ._transRef = pTransRef
+                ._lineNo = pLineNo.ToInteger
 
             End With
             Return info
         End Function
 
         Private Sub New(ByVal dr As SafeDataReader)
-            _recType = dr.GetString("REC_TYPE").TrimEnd
+            _lineNo = dr.GetInt32("LINE_NO")
             _transRef = dr.GetString("TRANS_REF").TrimEnd
-            _headerId = dr.GetString("HEADER_ID").TrimEnd
             _custCode = dr.GetString("CUST_CODE").TrimEnd
             _transDate.Text = dr.GetInt32("TRANS_DATE")
             _status = dr.GetString("STATUS").TrimEnd
-            _transCd = dr.GetString("TRANS_CD").TrimEnd
-            _transCode = dr.GetString("TRANS_CODE").TrimEnd
+            _transactionType = dr.GetString("TRANS_TYPE").TrimEnd
             _orderNo = dr.GetString("ORDER_NO").TrimEnd
             _dNoteNo = dr.GetString("D_NOTE_NO").TrimEnd
             _delivAdd = dr.GetString("DELIV_ADD").TrimEnd
             _delivAddress = dr.GetString("DELIV_ADDRESS").TrimEnd
             _orderDate.Text = dr.GetInt32("ORDER_DATE")
             _ackDate.Text = dr.GetInt32("ACK_DATE")
-            _pickDate.Text = dr.GetInt32("PICK_DATE")
-            _delDate.Text = dr.GetInt32("DEL_DATE")
-            _invDate.Text = dr.GetInt32("INV_DATE")
-            _invPrd.Text = dr.GetInt32("INV_PRD")
             _custRef = dr.GetString("CUST_REF").TrimEnd
             _convCode = dr.GetString("CONV_CODE").TrimEnd
             _comments = dr.GetString("COMMENTS").TrimEnd
             _transVal.Text = dr.GetDecimal("TRANS_VAL")
-            _payDate.Text = dr.GetInt32("PAY_DATE")
-            _analAdd = dr.GetString("ANAL_ADD").TrimEnd
-            _linkedText = dr.GetString("LINKED_TEXT").TrimEnd
             _analM0 = dr.GetString("ANAL_M0").TrimEnd
             _analM1 = dr.GetString("ANAL_M1").TrimEnd
             _analM2 = dr.GetString("ANAL_M2").TrimEnd
@@ -641,7 +559,7 @@ Namespace SO
 
 #Region "IDoclink"
         Public Function Get_DOL_Reference() As String Implements IDocLink.Get_DOL_Reference
-            Return String.Format("{0}#{1}", Get_TransType, _recType)
+            Return String.Format("{0}#{1}", Get_TransType, _lineNo)
         End Function
 
         Public Function Get_TransType() As String Implements IDocLink.Get_TransType

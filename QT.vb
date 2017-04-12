@@ -7,7 +7,6 @@ Imports Csla.Validation
 Imports pbs.BO.DataAnnotations
 Imports pbs.BO.Script
 Imports pbs.BO.BusinessRules
-Imports System.Text.RegularExpressions
 
 
 Namespace SO
@@ -66,46 +65,34 @@ Namespace SO
         Friend _DTB As String = String.Empty
 
 
-        Private _recType As String = String.Empty
-        <System.ComponentModel.DataObjectField(True, False)> _
-        <CellInfo(GroupName:="", Tips:="")>
-        <Rule(Required:=True)>
-        Public ReadOnly Property RecType() As String
+        Private _lineNo As Integer
+        <System.ComponentModel.DataObjectField(True, True)> _
+        Public ReadOnly Property LineNo() As String
             Get
-                Return _recType
+                Return _lineNo
             End Get
         End Property
 
-        Friend _transRef As String = String.Empty
-        <System.ComponentModel.DataObjectField(True, False)> _
+        Private _transRef As String = String.Empty
         <CellInfo(GroupName:="", Tips:="")>
         <Rule(Required:=True)>
-        Public ReadOnly Property TransRef() As String
+        Public Property TransRef() As String
             Get
                 Return _transRef
             End Get
-        End Property
-
-
-        Private _headerId As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
-        Public Property HeaderId() As String
-            Get
-                Return _headerId
-            End Get
             Set(ByVal value As String)
-                CanWriteProperty("HeaderId", True)
+                CanWriteProperty("TransRef", True)
                 If value Is Nothing Then value = String.Empty
-                If Not _headerId.Equals(value) Then
-                    _headerId = value
-                    PropertyHasChanged("HeaderId")
+                If Not _transRef.Equals(value) Then
+                    _transRef = value
+                    PropertyHasChanged("TransRef")
                 End If
             End Set
         End Property
 
         Private _custCode As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
         <Rule(Required:=True)>
+        <CellInfo(GroupName:="", Tips:="")>
         Public Property CustCode() As String
             Get
                 Return _custCode
@@ -153,34 +140,18 @@ Namespace SO
             End Set
         End Property
 
-        Private _transCd As String = String.Empty
+        Private _transactionType As String = String.Empty
         <CellInfo(GroupName:="", Tips:="")>
-        Public Property TransCd() As String
+        Public Property TransactionType() As String
             Get
-                Return _transCd
+                Return _transactionType
             End Get
             Set(ByVal value As String)
-                CanWriteProperty("TransCd", True)
+                CanWriteProperty("TransType", True)
                 If value Is Nothing Then value = String.Empty
-                If Not _transCd.Equals(value) Then
-                    _transCd = value
-                    PropertyHasChanged("TransCd")
-                End If
-            End Set
-        End Property
-
-        Private _transCode As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
-        Public Property TransCode() As String
-            Get
-                Return _transCode
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("TransCode", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _transCode.Equals(value) Then
-                    _transCode = value
-                    PropertyHasChanged("TransCode")
+                If Not _transactionType.Equals(value) Then
+                    _transactionType = value
+                    PropertyHasChanged("TransType")
                 End If
             End Set
         End Property
@@ -281,70 +252,6 @@ Namespace SO
             End Set
         End Property
 
-        Private _pickDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="", Tips:="")>
-        Public Property PickDate() As String
-            Get
-                Return _pickDate.Text
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("PickDate", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _pickDate.Equals(value) Then
-                    _pickDate.Text = value
-                    PropertyHasChanged("PickDate")
-                End If
-            End Set
-        End Property
-
-        Private _delDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="", Tips:="")>
-        Public Property DelDate() As String
-            Get
-                Return _delDate.Text
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("DelDate", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _delDate.Equals(value) Then
-                    _delDate.Text = value
-                    PropertyHasChanged("DelDate")
-                End If
-            End Set
-        End Property
-
-        Private _invDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="", Tips:="")>
-        Public Property InvDate() As String
-            Get
-                Return _invDate.Text
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("InvDate", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _invDate.Equals(value) Then
-                    _invDate.Text = value
-                    PropertyHasChanged("InvDate")
-                End If
-            End Set
-        End Property
-
-        Private _invPrd As SmartPeriod = New pbs.Helper.SmartPeriod()
-        <CellInfo(LinkCode.Period, GroupName:="", Tips:="")>
-        Public Property InvPrd() As String
-            Get
-                Return _invPrd.Text
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("InvPrd", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _invPrd.Equals(value) Then
-                    _invPrd.Text = value
-                    PropertyHasChanged("InvPrd")
-                End If
-            End Set
-        End Property
-
         Private _custRef As String = String.Empty
         <CellInfo(GroupName:="", Tips:="")>
         Public Property CustRef() As String
@@ -405,54 +312,6 @@ Namespace SO
                 If Not _transVal.Equals(value) Then
                     _transVal.Text = value
                     PropertyHasChanged("TransVal")
-                End If
-            End Set
-        End Property
-
-        Private _payDate As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="", Tips:="")>
-        Public Property PayDate() As String
-            Get
-                Return _payDate.Text
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("PayDate", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _payDate.Equals(value) Then
-                    _payDate.Text = value
-                    PropertyHasChanged("PayDate")
-                End If
-            End Set
-        End Property
-
-        Private _analAdd As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
-        Public Property AnalAdd() As String
-            Get
-                Return _analAdd
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("AnalAdd", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _analAdd.Equals(value) Then
-                    _analAdd = value
-                    PropertyHasChanged("AnalAdd")
-                End If
-            End Set
-        End Property
-
-        Private _linkedText As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
-        Public Property LinkedText() As String
-            Get
-                Return _linkedText
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("LinkedText", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _linkedText.Equals(value) Then
-                    _linkedText = value
-                    PropertyHasChanged("LinkedText")
                 End If
             End Set
         End Property
@@ -730,7 +589,7 @@ Namespace SO
         End Property
 
         Private _exCustCode1 As String = String.Empty
-        <CellInfo(GroupName:="Extended Code")>
+        <CellInfo(GroupName:="", Tips:="")>
         Public Property ExCustCode1() As String
             Get
                 Return _exCustCode1
@@ -746,7 +605,7 @@ Namespace SO
         End Property
 
         Private _exCustCode2 As String = String.Empty
-        <CellInfo(GroupName:="Extended Code")>
+        <CellInfo(GroupName:="", Tips:="")>
         Public Property ExCustCode2() As String
             Get
                 Return _exCustCode2
@@ -762,7 +621,7 @@ Namespace SO
         End Property
 
         Private _exText1 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText1() As String
             Get
                 Return _exText1
@@ -778,7 +637,7 @@ Namespace SO
         End Property
 
         Private _exText2 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText2() As String
             Get
                 Return _exText2
@@ -794,7 +653,7 @@ Namespace SO
         End Property
 
         Private _exText3 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText3() As String
             Get
                 Return _exText3
@@ -810,7 +669,7 @@ Namespace SO
         End Property
 
         Private _exText4 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText4() As String
             Get
                 Return _exText4
@@ -826,7 +685,7 @@ Namespace SO
         End Property
 
         Private _exText5 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText5() As String
             Get
                 Return _exText5
@@ -842,7 +701,7 @@ Namespace SO
         End Property
 
         Private _exText6 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText6() As String
             Get
                 Return _exText6
@@ -858,7 +717,7 @@ Namespace SO
         End Property
 
         Private _exText7 As String = String.Empty
-        <CellInfo(GroupName:="ExtText")>
+        <CellInfo(GroupName:="Extended Text")>
         Public Property ExText7() As String
             Get
                 Return _exText7
@@ -874,7 +733,7 @@ Namespace SO
         End Property
 
         Private _exVal1 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        <CellInfo(GroupName:="ExtVal")>
+        <CellInfo(GroupName:="Extended Value")>
         Public Property ExVal1() As String
             Get
                 Return _exVal1.Text
@@ -890,7 +749,7 @@ Namespace SO
         End Property
 
         Private _exVal2 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        <CellInfo(GroupName:="ExtVal")>
+        <CellInfo(GroupName:="Extended Value")>
         Public Property ExVal2() As String
             Get
                 Return _exVal2.Text
@@ -906,7 +765,7 @@ Namespace SO
         End Property
 
         Private _exVal3 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        <CellInfo(GroupName:="ExtVal")>
+        <CellInfo(GroupName:="Extended Value")>
         Public Property ExVal3() As String
             Get
                 Return _exVal3.Text
@@ -922,7 +781,7 @@ Namespace SO
         End Property
 
         Private _exVal4 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        <CellInfo(GroupName:="ExtVal")>
+        <CellInfo(GroupName:="Extended Value")>
         Public Property ExVal4() As String
             Get
                 Return _exVal4.Text
@@ -938,7 +797,7 @@ Namespace SO
         End Property
 
         Private _exVal5 As pbs.Helper.SmartFloat = New pbs.Helper.SmartFloat(0)
-        <CellInfo(GroupName:="ExtVal")>
+        <CellInfo(GroupName:="Extended Value")>
         Public Property ExVal5() As String
             Get
                 Return _exVal5.Text
@@ -954,7 +813,7 @@ Namespace SO
         End Property
 
         Private _exDate1 As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="ExtDate")>
+        <CellInfo(LinkCode.Calendar, GroupName:="Extended Date")>
         Public Property ExDate1() As String
             Get
                 Return _exDate1.Text
@@ -970,7 +829,7 @@ Namespace SO
         End Property
 
         Private _exDate2 As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="ExtDate")>
+        <CellInfo(LinkCode.Calendar, GroupName:="Extended Date")>
         Public Property ExDate2() As String
             Get
                 Return _exDate2.Text
@@ -986,7 +845,7 @@ Namespace SO
         End Property
 
         Private _exDate3 As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="ExtDate")>
+        <CellInfo(LinkCode.Calendar, GroupName:="Extended Date")>
         Public Property ExDate3() As String
             Get
                 Return _exDate3.Text
@@ -1002,7 +861,7 @@ Namespace SO
         End Property
 
         Private _exDate4 As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="ExtDate")>
+        <CellInfo(LinkCode.Calendar, GroupName:="Extended Date")>
         Public Property ExDate4() As String
             Get
                 Return _exDate4.Text
@@ -1018,7 +877,7 @@ Namespace SO
         End Property
 
         Private _exDate5 As pbs.Helper.SmartDate = New pbs.Helper.SmartDate()
-        <CellInfo(LinkCode.Calendar, GroupName:="ExtDate")>
+        <CellInfo(LinkCode.Calendar, GroupName:="Extended Date")>
         Public Property ExDate5() As String
             Get
                 Return _exDate5.Text
@@ -1132,19 +991,15 @@ Namespace SO
 
         'Get ID
         Protected Overrides Function GetIdValue() As Object
-            Return String.Format("{0}:{1}", _recType.Trim, _transRef.Trim)
+            Return _lineNo
         End Function
 
         'IComparable
         Public Function CompareTo(ByVal IDObject) As Integer Implements System.IComparable.CompareTo
             Dim ID = IDObject.ToString
-            'Dim m As MatchCollection = Regex.Matches(ID, pbsRegex.AlphaNumericExt)
-            Dim pRecType As String = Regex.Match(ID, pbsRegex.AlphaNumericExt).Value
-            Dim pTransRef As String = Regex.Match(ID, pbsRegex.AlphaNumericExt).NextMatch.Value
-            If _recType.Trim < pRecType Then Return -1
-            If _recType.Trim > pRecType Then Return 1
-            If _transRef.Trim < pTransRef Then Return -1
-            If _transRef.Trim > pTransRef Then Return 1
+            Dim pLineNo As String = ID.Trim
+            If _lineNo < pLineNo Then Return -1
+            If _lineNo > pLineNo Then Return 1
             Return 0
         End Function
 
@@ -1197,39 +1052,29 @@ Namespace SO
             Return New QT
         End Function
 
-        Public Shared Function NewQT(ByVal pRecType As String, ByVal pTransRef As String) As QT
-            If KeyDuplicated(pRecType, pTransRef) Then ExceptionThower.BusinessRuleStop(String.Format(ResStr(ResStrConst.NOACCESS), ResStr("QT")))
-            Return DataPortal.Create(Of QT)(New Criteria(pRecType, pTransRef))
+        Public Shared Function NewQT(ByVal pLineNo As String) As QT
+            'If KeyDuplicated(pLineNo) Then ExceptionThower.BusinessRuleStop(String.Format(ResStr(ResStrConst.NOACCESS), ResStr("QT")))
+            Return DataPortal.Create(Of QT)(New Criteria(pLineNo.ToInteger))
         End Function
 
         Public Shared Function NewBO(ByVal ID As String) As QT
-            'Dim m As MatchCollection = Regex.Matches(ID, pbsRegex.AlphaNumericExt)
-            'Dim pRecType As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).Value.Trim
-            'Dim pTransRef As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).NextMatch.Value.Trim
+            Dim pLineNo As String = ID.Trim
 
-            Dim pRecType As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).Value
-            Dim pTransRef As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).NextMatch.Value
-
-            Return NewQT(pRecType, pTransRef)
+            Return NewQT(pLineNo)
         End Function
 
-        Public Shared Function GetQT(ByVal pRecType As String, ByVal pTransRef As String) As QT
-            Return DataPortal.Fetch(Of QT)(New Criteria(pRecType, pTransRef))
+        Public Shared Function GetQT(ByVal pLineNo As String) As QT
+            Return DataPortal.Fetch(Of QT)(New Criteria(pLineNo.ToInteger))
         End Function
 
         Public Shared Function GetBO(ByVal ID As String) As QT
-            'Dim m As MatchCollection = Regex.Matches(ID, pbsRegex.AlphaNumericExt)
-            'Dim pRecType As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).Value.Trim
-            'Dim pTransRef As String = Regex.Matches(ID, pbsRegex.AlphaNumericExt).NextMatch.Value.Trim
+            Dim pLineNo As String = ID.Trim
 
-            Dim pRecType As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).Value
-            Dim pTransRef As String = Regex.Match(ID, pbsRegex.AlphaNumericExt2).NextMatch.Value
-
-            Return GetQT(pRecType, pTransRef)
+            Return GetQT(pLineNo)
         End Function
 
-        Public Shared Sub DeleteQT(ByVal pRecType As String, ByVal pTransRef As String)
-            DataPortal.Delete(New Criteria(pRecType, pTransRef))
+        Public Shared Sub DeleteQT(ByVal pLineNo As String)
+            DataPortal.Delete(New Criteria(pLineNo.ToInteger))
         End Sub
 
         Public Overrides Function Save() As QT
@@ -1241,13 +1086,12 @@ Namespace SO
             Return MyBase.Save()
         End Function
 
-        Public Function CloneQT(ByVal pRecType As String, ByVal pTransRef As String) As QT
+        Public Function CloneQT(ByVal pLineNo As String) As QT
 
-            If QT.KeyDuplicated(pRecType, pTransRef) Then ExceptionThower.BusinessRuleStop(ResStr(ResStrConst.CreateAlreadyExists), Me.GetType.ToString.Leaf.Translate)
+            'If QT.KeyDuplicated(pLineNo) Then ExceptionThower.BusinessRuleStop(ResStr(ResStrConst.CreateAlreadyExists), Me.GetType.ToString.Leaf.Translate)
 
             Dim cloningQT As QT = MyBase.Clone
-            cloningQT._recType = pRecType
-            cloningQT._transRef = pTransRef
+            cloningQT._lineNo = 0
             cloningQT._DTB = Context.CurrentBECode
 
             'Todo:Remember to reset status of the new object here 
@@ -1265,20 +1109,17 @@ Namespace SO
 
         <Serializable()> _
         Private Class Criteria
-            Public _recType As String = String.Empty
-            Public _transRef As String = String.Empty
+            Public _lineNo As Integer
 
-            Public Sub New(ByVal pRecType As String, ByVal pTransRef As String)
-                _recType = pRecType
-                _transRef = pTransRef
+            Public Sub New(ByVal pLineNo As String)
+                _lineNo = pLineNo.ToInteger
 
             End Sub
         End Class
 
         <RunLocal()> _
         Private Overloads Sub DataPortal_Create(ByVal criteria As Criteria)
-            _recType = criteria._recType
-            _transRef = criteria._transRef
+            _lineNo = criteria._lineNo
 
             ValidationRules.CheckRules()
         End Sub
@@ -1287,9 +1128,10 @@ Namespace SO
             Using ctx = ConnectionManager.GetManager
                 Using cm = ctx.Connection.CreateCommand()
                     cm.CommandType = CommandType.Text
-                    cm.CommandText = <SqlText>SELECT * FROM pbs_SO_QT_<%= _DTB %> WHERE REC_TYPE= '<%= criteria._recType %>' AND TRANS_REF= '<%= criteria._transRef %>' 
-                                              SELECT * FROM pbs_SO_QTD_<%= _DTB %> WHERE TRANS_REF= '<%= criteria._transRef %>'
-                                    </SqlText>.Value.Trim
+                    cm.CommandText = <SqlText>
+                                         SELECT * FROM pbs_SO_QT_<%= _DTB %> WHERE LINE_NO= <%= criteria._lineNo %>
+                                         SELECT * FROM pbs_SO_QTD_<%= _DTB %> WHERE QT_NO= <%= criteria._lineNo %>
+                                     </SqlText>.Value.Trim
 
                     Using dr As New SafeDataReader(cm.ExecuteReader)
                         If dr.Read Then
@@ -1299,7 +1141,6 @@ Namespace SO
 
                         If dr.NextResult Then
                             _details = QTDs.GetQTDs(dr, Me)
-                            MarkOld()
                         End If
                     End Using
 
@@ -1308,31 +1149,22 @@ Namespace SO
         End Sub
 
         Private Sub FetchObject(ByVal dr As SafeDataReader)
-            _recType = dr.GetString("REC_TYPE").TrimEnd
+            _lineNo = dr.GetInt32("LINE_NO")
             _transRef = dr.GetString("TRANS_REF").TrimEnd
-            _headerId = dr.GetString("HEADER_ID").TrimEnd
             _custCode = dr.GetString("CUST_CODE").TrimEnd
             _transDate.Text = dr.GetInt32("TRANS_DATE")
             _status = dr.GetString("STATUS").TrimEnd
-            _transCd = dr.GetString("TRANS_CD").TrimEnd
-            _transCode = dr.GetString("TRANS_CODE").TrimEnd
+            _transactionType = dr.GetString("TRANS_TYPE").TrimEnd
             _orderNo = dr.GetString("ORDER_NO").TrimEnd
             _dNoteNo = dr.GetString("D_NOTE_NO").TrimEnd
             _delivAdd = dr.GetString("DELIV_ADD").TrimEnd
             _delivAddress = dr.GetString("DELIV_ADDRESS").TrimEnd
             _orderDate.Text = dr.GetInt32("ORDER_DATE")
             _ackDate.Text = dr.GetInt32("ACK_DATE")
-            _pickDate.Text = dr.GetInt32("PICK_DATE")
-            _delDate.Text = dr.GetInt32("DEL_DATE")
-            _invDate.Text = dr.GetInt32("INV_DATE")
-            _invPrd.Text = dr.GetInt32("INV_PRD")
             _custRef = dr.GetString("CUST_REF").TrimEnd
             _convCode = dr.GetString("CONV_CODE").TrimEnd
             _comments = dr.GetString("COMMENTS").TrimEnd
             _transVal.Text = dr.GetDecimal("TRANS_VAL")
-            _payDate.Text = dr.GetInt32("PAY_DATE")
-            _analAdd = dr.GetString("ANAL_ADD").TrimEnd
-            _linkedText = dr.GetString("LINKED_TEXT").TrimEnd
             _analM0 = dr.GetString("ANAL_M0").TrimEnd
             _analM1 = dr.GetString("ANAL_M1").TrimEnd
             _analM2 = dr.GetString("ANAL_M2").TrimEnd
@@ -1386,44 +1218,37 @@ Namespace SO
                     Using cm = ctx.Connection.CreateCommand()
 
                         cm.CommandType = CommandType.StoredProcedure
-                        cm.CommandText = String.Format("pbs_SO_QT_{0}_InsertUpdate", _DTB)
+                        cm.CommandText = String.Format("pbs_SO_QT_{0}_Insert", _DTB)
 
+                        cm.Parameters.AddWithValue("@LINE_NO", _lineNo).Direction = ParameterDirection.Output
                         AddInsertParameters(cm)
                         cm.ExecuteNonQuery()
 
+                        _lineNo = CInt(cm.Parameters("@LINE_NO").Value)
                     End Using
 
-                    Details.Update(ctx.Connection, Me)
+                    Me.Details.Update(ctx.Connection, Me)
                 End Using
             End SyncLock
         End Sub
 
         Private Sub AddInsertParameters(ByVal cm As SqlCommand)
-            cm.Parameters.AddWithValue("@REC_TYPE", _recType.Trim)
+
             cm.Parameters.AddWithValue("@TRANS_REF", _transRef.Trim)
-            cm.Parameters.AddWithValue("@HEADER_ID", _headerId.Trim)
             cm.Parameters.AddWithValue("@CUST_CODE", _custCode.Trim)
             cm.Parameters.AddWithValue("@TRANS_DATE", _transDate.DBValue)
             cm.Parameters.AddWithValue("@STATUS", _status.Trim)
-            cm.Parameters.AddWithValue("@TRANS_CD", _transCd.Trim)
-            cm.Parameters.AddWithValue("@TRANS_CODE", _transCode.Trim)
+            cm.Parameters.AddWithValue("@TRANS_TYPE", _transactionType.Trim)
             cm.Parameters.AddWithValue("@ORDER_NO", _orderNo.Trim)
             cm.Parameters.AddWithValue("@D_NOTE_NO", _dNoteNo.Trim)
             cm.Parameters.AddWithValue("@DELIV_ADD", _delivAdd.Trim)
             cm.Parameters.AddWithValue("@DELIV_ADDRESS", _delivAddress.Trim)
             cm.Parameters.AddWithValue("@ORDER_DATE", _orderDate.DBValue)
             cm.Parameters.AddWithValue("@ACK_DATE", _ackDate.DBValue)
-            cm.Parameters.AddWithValue("@PICK_DATE", _pickDate.DBValue)
-            cm.Parameters.AddWithValue("@DEL_DATE", _delDate.DBValue)
-            cm.Parameters.AddWithValue("@INV_DATE", _invDate.DBValue)
-            cm.Parameters.AddWithValue("@INV_PRD", _invPrd.DBValue)
             cm.Parameters.AddWithValue("@CUST_REF", _custRef.Trim)
             cm.Parameters.AddWithValue("@CONV_CODE", _convCode.Trim)
             cm.Parameters.AddWithValue("@COMMENTS", _comments.Trim)
             cm.Parameters.AddWithValue("@TRANS_VAL", _transVal.DBValue)
-            cm.Parameters.AddWithValue("@PAY_DATE", _payDate.DBValue)
-            cm.Parameters.AddWithValue("@ANAL_ADD", _analAdd.Trim)
-            cm.Parameters.AddWithValue("@LINKED_TEXT", _linkedText.Trim)
             cm.Parameters.AddWithValue("@ANAL_M0", _analM0.Trim)
             cm.Parameters.AddWithValue("@ANAL_M1", _analM1.Trim)
             cm.Parameters.AddWithValue("@ANAL_M2", _analM2.Trim)
@@ -1471,11 +1296,26 @@ Namespace SO
 
 
         Protected Overrides Sub DataPortal_Update()
-            DataPortal_Insert()
+            SyncLock _lockObj
+                Using ctx = ConnectionManager.GetManager
+                    Using cm = ctx.Connection.CreateCommand()
+
+                        cm.CommandType = CommandType.StoredProcedure
+                        cm.CommandText = String.Format("pbs_SO_QT_{0}_Update", _DTB)
+
+                        cm.Parameters.AddWithValue("@LINE_NO", _lineNo)
+                        AddInsertParameters(cm)
+                        cm.ExecuteNonQuery()
+
+                    End Using
+
+                    Me.Details.Update(ctx.Connection, Me)
+                End Using
+            End SyncLock
         End Sub
 
         Protected Overrides Sub DataPortal_DeleteSelf()
-            DataPortal_Delete(New Criteria(_recType, _transRef))
+            DataPortal_Delete(New Criteria(_lineNo))
         End Sub
 
         Private Overloads Sub DataPortal_Delete(ByVal criteria As Criteria)
@@ -1483,7 +1323,7 @@ Namespace SO
                 Using cm = ctx.Connection.CreateCommand()
 
                     cm.CommandType = CommandType.Text
-                    cm.CommandText = <SqlText>DELETE pbs_SO_QT_<%= _DTB %> WHERE REC_TYPE= '<%= criteria._recType %>' AND TRANS_REF= '<%= criteria._transRef %>' </SqlText>.Value.Trim
+                    cm.CommandText = <SqlText>DELETE pbs_SO_QT_<%= _DTB %> WHERE LINE_NO= <%= criteria._lineNo %></SqlText>.Value.Trim
                     cm.ExecuteNonQuery()
 
                 End Using
@@ -1501,22 +1341,20 @@ Namespace SO
 #End Region 'Data Access                           
 
 #Region " Exists "
-        Public Shared Function Exists(ByVal ID As String) As Boolean
-            Return QTInfoList.ContainsID(ID)
+        Public Shared Function Exists(ByVal pLineNo As String) As Boolean
+            Return QTInfoList.ContainsCode(pLineNo)
         End Function
 
-        Public Shared Function KeyDuplicated(ByVal pRecType As String, ByVal pTransRef As String) As Boolean
-            Dim SqlText = <SqlText>SELECT COUNT(*) FROM pbs_SO_QT_<%= Context.CurrentBECode %> WHERE REC_TYPE= '<%= pRecType %>' AND TRANS_REF= '<%= pTransRef %>'</SqlText>.Value.Trim
-            Return SQLCommander.GetScalarInteger(SqlText) > 0
-        End Function
+        'Public Shared Function KeyDuplicated(ByVal pLineNo As SmartInt32) As Boolean
+        '    Dim SqlText = <SqlText>SELECT COUNT(*) FROM pbs_SO_QT_DEM WHERE DTB='<%= Context.CurrentBECode %>'  AND LINE_NO= '<%= pLineNo %>'</SqlText>.Value.Trim
+        '    Return SQLCommander.GetScalarInteger(SqlText) > 0
+        'End Function
 #End Region
 
 #Region " IGenpart "
 
         Public Function CloneBO(ByVal id As String) As Object Implements Interfaces.IGenPartObject.CloneBO
-            Dim theRecType = Regex.Match(id, pbsRegex.AlphaNumericExt2).Value
-            Dim theTransRef = Regex.Match(id, pbsRegex.AlphaNumericExt2).NextMatch.Value
-            Return CloneQT(theRecType, theTransRef)
+            Return CloneQT(id)
         End Function
 
         Public Function getBO1(ByVal id As String) As Object Implements Interfaces.IGenPartObject.GetBO
@@ -1542,7 +1380,7 @@ Namespace SO
 
 #Region "IDoclink"
         Public Function Get_DOL_Reference() As String Implements IDocLink.Get_DOL_Reference
-            Return String.Format("{0}#{1}", Get_TransType, _recType)
+            Return String.Format("{0}#{1}", Get_TransType, _lineNo)
         End Function
 
         Public Function Get_TransType() As String Implements IDocLink.Get_TransType
