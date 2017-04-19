@@ -98,6 +98,7 @@ Namespace SO
             For Each child As QTD In Me
                 child._DTB = parent._DTB
                 child.QtNo = parent.LineNo
+                child.TransRef = parent.TransRef
                 'child.OrderNo = parent.OrderNo
                 If child.IsNew Then
                     child.Insert(cn)

@@ -1,4 +1,4 @@
-﻿
+﻿Imports System.Linq
 Imports pbs.Helper
 Imports pbs.Helper.Interfaces
 Imports System.Data
@@ -45,13 +45,6 @@ Namespace SO
         Public ReadOnly Property TransDate() As String
             Get
                 Return _transDate.DateViewFormat
-            End Get
-        End Property
-
-        Private _status As String = String.Empty
-        Public ReadOnly Property Status() As String
-            Get
-                Return _status
             End Get
         End Property
 
@@ -398,6 +391,20 @@ Namespace SO
             End Get
         End Property
 
+        Private _messageId As Integer
+        Public ReadOnly Property MessageId() As Integer
+            Get
+                Return _messageId
+            End Get
+        End Property
+
+        Private _status As String = String.Empty
+        Public ReadOnly Property Status() As String
+            Get
+                Return _status
+            End Get
+        End Property
+
         Private _isInterface As String = String.Empty
         Public ReadOnly Property IsInterface() As String
             Get
@@ -449,7 +456,7 @@ Namespace SO
 
         Public ReadOnly Property Code As String Implements IInfo.Code
             Get
-                Return _transRef
+                Return _lineNo
             End Get
         End Property
 
@@ -493,7 +500,6 @@ Namespace SO
             _transRef = dr.GetString("TRANS_REF").TrimEnd
             _custCode = dr.GetString("CUST_CODE").TrimEnd
             _transDate.Text = dr.GetInt32("TRANS_DATE")
-            _status = dr.GetString("STATUS").TrimEnd
             _transactionType = dr.GetString("TRANS_TYPE").TrimEnd
             _orderNo = dr.GetString("ORDER_NO").TrimEnd
             _dNoteNo = dr.GetString("D_NOTE_NO").TrimEnd
@@ -543,6 +549,8 @@ Namespace SO
             _exDate5.Text = dr.GetInt32("EX_DATE5")
             _quoteBy = dr.GetString("QUOTE_BY").TrimEnd
             _soBy = dr.GetString("SO_BY").TrimEnd
+            _messageId = dr.GetInt32("MESSAGE_ID")
+            _status = dr.GetString("STATUS").TrimEnd
             _isInterface = dr.GetString("IS_INTERFACE").TrimEnd
             _locked = dr.GetString("LOCKED").TrimEnd
             _lockedBy = dr.GetString("LOCKED_BY").TrimEnd
@@ -567,6 +575,86 @@ Namespace SO
         End Function
 #End Region
 
+#Region "Usage"
+        Function GetDataSet() As DataSet
+
+            'Dim filter = New Dictionary(Of String, String)
+            'filter.Add("Period", _periodQuoted.DBValue)
+
+            Dim ds = New DataSet("Quotations")
+            Dim h = QTInfoList.GetQTInfo(_lineNo)
+            Dim d = (From itm In QTDInfoList.GetQTDInfoList Where itm.QtNo = _lineNo).ToList
+
+            ds.Tables.Add(List2Table.CreateTableFromSingleObject(h, "Header"))
+            ds.Tables.Add(List2Table.CreateTableFromList(d, "Detail"))
+
+            Return ds
+        End Function
+
+#End Region
+
+#Region "Mailing"
+        Private _profile As SDInfo = Nothing
+        Private Function GetQTProfile() As SDInfo
+            If _profile Is Nothing Then
+                _profile = SDInfoList.GetSDInfo(_transactionType)
+            End If
+            Return _profile
+        End Function
+
+        Friend Function BuilMSGO() As Mail.MSGO
+
+            'Create mail body: mail body required 3 elements: tempalte, data, parameters
+            Dim template = "QTTemplate"
+
+            Dim data = GetDataSet()
+
+            Dim params = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+            params.Add("Profile", TransactionType)
+            params.Add("Period", PeriodQuoted)
+            params.Add("TransRef", TransRef)
+
+            Dim theDocFile = pbs.BO.Output.ToSnapReport.CreateDocReport(template, data, params)
+
+            'Create MSGOBuilder and add receiver, subject, body, attachment file to it
+            Dim cus = pbs.BO.CRM.CUSInfoList.GetCUSInfo(CustCode)
+            Dim builder = New Mail.MSGOBuilder
+
+            'receiver
+            builder._to = cus.Email
+
+            'subject
+            Dim subject = String.Format(ResStr("Quotations no: {0} in Period: {1}"), TransRef, PeriodQuoted)
+            builder._subject = Nz(Description, subject)
+
+            'mail body
+            builder._bodyDocFileName = theDocFile
+
+            'attachment file
+            builder._attachmentFiles = New List(Of String)
+            If Not String.IsNullOrEmpty(template) Then
+                params.Add("$FileSignature", String.Format("pbs.BO.SO.QT#{0}", _lineNo))
+                params.Add("$Comments", subject)
+
+                Dim theXlsFile = FlexelReporter.CreateReport(data, template, params)
+                builder._attachmentFiles.Add(theXlsFile)
+            End If
+
+            'Send, update status and save:
+            'send
+            Dim msg = builder.GenerateMSGO
+            msg.MsgType = TransactionType
+            msg._msgStatus = "Approved"
+
+            'save
+            If msg.IsSavable Then msg = msg.Save()
+            Return msg
+
+        End Function
+
+
+
+#End Region
     End Class
 
 End Namespace

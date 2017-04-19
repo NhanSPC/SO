@@ -124,22 +124,7 @@ Namespace SO
             End Set
         End Property
 
-        Private _status As String = String.Empty
-        <CellInfo(GroupName:="", Tips:="")>
-        Public Property Status() As String
-            Get
-                Return _status
-            End Get
-            Set(ByVal value As String)
-                CanWriteProperty("Status", True)
-                If value Is Nothing Then value = String.Empty
-                If Not _status.Equals(value) Then
-                    _status = value
-                    PropertyHasChanged("Status")
-                End If
-            End Set
-        End Property
-
+       
         Private _transactionType As String = String.Empty
         <CellInfo(GroupName:="", Tips:="")>
         Public Property TransactionType() As String
@@ -924,6 +909,39 @@ Namespace SO
             End Set
         End Property
 
+        Private _status As String = String.Empty
+        <CellInfo(GroupName:="", Tips:="")>
+        Public Property Status() As String
+            Get
+                Return _status
+            End Get
+            Set(ByVal value As String)
+                CanWriteProperty("Status", True)
+                If value Is Nothing Then value = String.Empty
+                If Not _status.Equals(value) Then
+                    _status = value
+                    PropertyHasChanged("Status")
+                End If
+            End Set
+        End Property
+
+
+        Private _messageId As SmartInt32 = New SmartInt32(0)
+        <CellInfo(GroupName:="", Tips:="")>
+        Public Property MessageId() As String
+            Get
+                Return _messageId.Text
+            End Get
+            Set(ByVal value As String)
+                CanWriteProperty("MessageId", True)
+                If value Is Nothing Then value = String.Empty
+                If Not _messageId.Equals(value) Then
+                    _messageId.Text = value
+                    PropertyHasChanged("MessageId")
+                End If
+            End Set
+        End Property
+
         Private _isInterface As String = String.Empty
         <CellInfo(GroupName:="", Tips:="")>
         Public Property IsInterface() As String
@@ -1153,7 +1171,6 @@ Namespace SO
             _transRef = dr.GetString("TRANS_REF").TrimEnd
             _custCode = dr.GetString("CUST_CODE").TrimEnd
             _transDate.Text = dr.GetInt32("TRANS_DATE")
-            _status = dr.GetString("STATUS").TrimEnd
             _transactionType = dr.GetString("TRANS_TYPE").TrimEnd
             _orderNo = dr.GetString("ORDER_NO").TrimEnd
             _dNoteNo = dr.GetString("D_NOTE_NO").TrimEnd
@@ -1203,6 +1220,8 @@ Namespace SO
             _exDate5.Text = dr.GetInt32("EX_DATE5")
             _quoteBy = dr.GetString("QUOTE_BY").TrimEnd
             _soBy = dr.GetString("SO_BY").TrimEnd
+            _messageId.Text = dr.GetInt32("MESSAGE_ID")
+            _status = dr.GetString("STATUS").TrimEnd
             _isInterface = dr.GetString("IS_INTERFACE").TrimEnd
             _locked = dr.GetString("LOCKED").TrimEnd
             _lockedBy = dr.GetString("LOCKED_BY").TrimEnd
@@ -1287,6 +1306,7 @@ Namespace SO
             cm.Parameters.AddWithValue("@EX_DATE5", _exDate5.DBValue)
             cm.Parameters.AddWithValue("@QUOTE_BY", _quoteBy.Trim)
             cm.Parameters.AddWithValue("@SO_BY", _soBy.Trim)
+            cm.Parameters.AddWithValue("@MESSAGE_ID", _messageId.DBValue)
             cm.Parameters.AddWithValue("@IS_INTERFACE", _isInterface.Trim)
             cm.Parameters.AddWithValue("@LOCKED", _locked.Trim)
             cm.Parameters.AddWithValue("@LOCKED_BY", _lockedBy.Trim)

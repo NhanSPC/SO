@@ -468,7 +468,7 @@ Namespace SO
 
         Public ReadOnly Property Description As String Implements IInfo.Description
             Get
-                Return String.Format("{1}{2}", _transRef, _transactionType)
+                Return String.Format("{0}{1}", _transRef, _transactionType)
             End Get
         End Property
 
