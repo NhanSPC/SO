@@ -602,55 +602,55 @@ Namespace SO
             Return _profile
         End Function
 
-        Friend Function BuilMSGO() As Mail.MSGO
+        'Friend Function BuilMSGO() As Mail.MSGO
 
-            'Create mail body: mail body required 3 elements: tempalte, data, parameters
-            Dim template = "QTTemplate"
+        '    'Create mail body: mail body required 3 elements: tempalte, data, parameters
+        '    Dim template = "QTTemplate"
 
-            Dim data = GetDataSet()
+        '    Dim data = GetDataSet()
 
-            Dim params = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
-            params.Add("Profile", TransactionType)
-            params.Add("Period", PeriodQuoted)
-            params.Add("TransRef", TransRef)
+        '    Dim params = New Dictionary(Of String, String)(StringComparer.OrdinalIgnoreCase)
+        '    params.Add("Profile", TransactionType)
+        '    params.Add("Period", PeriodQuoted)
+        '    params.Add("TransRef", TransRef)
 
-            Dim theDocFile = pbs.BO.Output.ToSnapReport.CreateDocReport(template, data, params)
+        '    Dim theDocFile = pbs.BO.Output.ToSnapReport.CreateDocReport(template, data, params)
 
-            'Create MSGOBuilder and add receiver, subject, body, attachment file to it
-            Dim cus = pbs.BO.CRM.CUSInfoList.GetCUSInfo(CustCode)
-            Dim builder = New Mail.MSGOBuilder
+        '    'Create MSGOBuilder and add receiver, subject, body, attachment file to it
+        '    Dim cus = pbs.BO.CRM.CUSInfoList.GetCUSInfo(CustCode)
+        '    Dim builder = New Mail.MSGOBuilder
 
-            'receiver
-            builder._to = cus.Email
+        '    'receiver
+        '    builder._to = cus.Email
 
-            'subject
-            Dim subject = String.Format(ResStr("Quotations no: {0} in Period: {1}"), TransRef, PeriodQuoted)
-            builder._subject = Nz(Description, subject)
+        '    'subject
+        '    Dim subject = String.Format(ResStr("Quotations no: {0} in Period: {1}"), TransRef, PeriodQuoted)
+        '    builder._subject = Nz(Description, subject)
 
-            'mail body
-            builder._bodyDocFileName = theDocFile
+        '    'mail body
+        '    builder._bodyDocFileName = theDocFile
 
-            'attachment file
-            builder._attachmentFiles = New List(Of String)
-            If Not String.IsNullOrEmpty(template) Then
-                params.Add("$FileSignature", String.Format("pbs.BO.SO.QT#{0}", _lineNo))
-                params.Add("$Comments", subject)
+        '    'attachment file
+        '    builder._attachmentFiles = New List(Of String)
+        '    If Not String.IsNullOrEmpty(template) Then
+        '        params.Add("$FileSignature", String.Format("pbs.BO.SO.QT#{0}", _lineNo))
+        '        params.Add("$Comments", subject)
 
-                Dim theXlsFile = FlexelReporter.CreateReport(data, template, params)
-                builder._attachmentFiles.Add(theXlsFile)
-            End If
+        '        Dim theXlsFile = FlexelReporter.CreateReport(data, template, params)
+        '        builder._attachmentFiles.Add(theXlsFile)
+        '    End If
 
-            'Send, update status and save:
-            'send
-            Dim msg = builder.GenerateMSGO
-            msg.MsgType = TransactionType
-            msg._msgStatus = "Approved"
+        '    'Send, update status and save:
+        '    'send
+        '    Dim msg = builder.GenerateMSGO
+        '    msg.MsgType = TransactionType
+        '    msg._msgStatus = "Approved"
 
-            'save
-            If msg.IsSavable Then msg = msg.Save()
-            Return msg
+        '    'save
+        '    If msg.IsSavable Then msg = msg.Save()
+        '    Return msg
 
-        End Function
+        'End Function
 
 
 

@@ -137,7 +137,7 @@ Namespace SO
             Return ret
         End Function
         Private Sub SelectPeriod()
-            Dim newPeriod = pbs.Helper.UIServices.ValueSelectorService.SelectValue(LinkCode.Period, ResStr(ResStrConst.SelectOneItemFromList), String.Empty)
+            Dim newPeriod = pbs.Helper.UIServices.ValueSelectorService.SelectValue(LinkCode.Period, ResStr(ResStrConst.SelectItemText("Period")), String.Empty)
 
             If Not String.IsNullOrEmpty(newPeriod) Then
                 _period.Text = newPeriod
@@ -167,56 +167,56 @@ Namespace SO
 
             Return ret
         End Function
-        Private Sub SendEmail()
+        'Private Sub SendEmail()
 
-            Dim logMsg = New List(Of String)
+        '    Dim logMsg = New List(Of String)
 
-            For Each itm In _selectedQT
+        '    For Each itm In _selectedQT
 
-                Dim msg As Mail.MSGO = Nothing
+        '        Dim msg As Mail.MSGO = Nothing
 
-                If itm.MessageId > 0 AndAlso itm.Status = "Sent" Then
-                    logMsg.Add(String.Format("Quotations for customer {0}.{1} at period {2} have already sent", itm.CustCode, pbs.BO.CRM.CUSInfoList.GetCUSInfo(itm.CustCode), itm.PeriodQuoted))
+        '        If itm.MessageId > 0 AndAlso itm.Status = "Sent" Then
+        '            logMsg.Add(String.Format("Quotations for customer {0}.{1} at period {2} have already sent", itm.CustCode, pbs.BO.CRM.CUSInfoList.GetCUSInfo(itm.CustCode), itm.PeriodQuoted))
 
-                ElseIf itm.MessageId > 0 AndAlso itm.Status = "Sending" Then
-                    logMsg.Add(String.Format("Quotations {0} is sending by another process", itm.TransRef))
+        '        ElseIf itm.MessageId > 0 AndAlso itm.Status = "Sending" Then
+        '            logMsg.Add(String.Format("Quotations {0} is sending by another process", itm.TransRef))
 
-                ElseIf itm.MessageId > 0 Then
-                    msg = Mail.MSGO.GetMSGO(itm.MessageId)
+        '        ElseIf itm.MessageId > 0 Then
+        '            msg = Mail.MSGO.GetMSGO(itm.MessageId)
 
-                Else
-                    msg = itm.BuilMSGO
+        '        Else
+        '            msg = itm.BuilMSGO
 
-                    If msg.MsgId > 0 Then
-                        Dim _qt = QT.GetQT(itm.LineNo)
-                        _qt.MessageId = msg.MsgId
-                        _qt.Status = "Approved"
-                        '_qt.MarAsDirty()                                                           'can't find this method
-                        If _qt.IsSavable Then _qt = _qt.Save
-                    End If
-                End If
+        '            If msg.MsgId > 0 Then
+        '                Dim _qt = QT.GetQT(itm.LineNo)
+        '                _qt.MessageId = msg.MsgId
+        '                _qt.Status = "Approved"
+        '                '_qt.MarAsDirty()                                                           'can't find this method
+        '                If _qt.IsSavable Then _qt = _qt.Save
+        '            End If
+        '        End If
 
-                If msg IsNot Nothing Then
-                    'Notify user if mail has been sent
-
-
-                    'sent mail if it hasn't been sent yet
-                    SendGridMailService.SendMSGO(msg)
-
-                    msg._msgStatus = "Sent"
-                    msg._sentDate = Now
-                    msg.MarkAsDirty()
-
-                    msg.Save()
-                    logMsg.Add("Email has been sent")
-
-                End If
-
-            Next
+        '        If msg IsNot Nothing Then
+        '            'Notify user if mail has been sent
 
 
+        '            'sent mail if it hasn't been sent yet
+        '            SendGridMailService.SendMSGO(msg)
 
-        End Sub
+        '            msg._msgStatus = "Sent"
+        '            msg._sentDate = Now
+        '            msg.MarkAsDirty()
+
+        '            msg.Save()
+        '            logMsg.Add("Email has been sent")
+
+        '        End If
+
+        '    Next
+
+
+
+        'End Sub
 
         'SaleOder button
         Private Function SaleOrder_Imp() As UITasks

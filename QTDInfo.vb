@@ -456,7 +456,7 @@ Namespace SO
 
         Public ReadOnly Property Code As String Implements IInfo.Code
             Get
-                Return _transRef
+                Return _lineNo
             End Get
         End Property
 

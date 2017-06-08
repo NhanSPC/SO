@@ -1112,6 +1112,9 @@ Namespace SO
             cloningQT._lineNo = 0
             cloningQT._DTB = Context.CurrentBECode
 
+            For Each itm In cloningQT._details
+                itm.MarkAsNewChild()
+            Next
             'Todo:Remember to reset status of the new object here 
             cloningQT.MarkNew()
             cloningQT.ApplyEdit()
@@ -1343,7 +1346,10 @@ Namespace SO
                 Using cm = ctx.Connection.CreateCommand()
 
                     cm.CommandType = CommandType.Text
-                    cm.CommandText = <SqlText>DELETE pbs_SO_QT_<%= _DTB %> WHERE LINE_NO= <%= criteria._lineNo %></SqlText>.Value.Trim
+                    cm.CommandText = <SqlText>
+                                         DELETE pbs_SO_QT_<%= _DTB %> WHERE LINE_NO= <%= criteria._lineNo %>
+                                         DELETE pbs_SO_QTD_<%= _DTB %> WHERE QT_NO = <%= criteria._lineNo %>
+                                     </SqlText>.Value.Trim
                     cm.ExecuteNonQuery()
 
                 End Using
